@@ -10,6 +10,8 @@ defmodule ST.Application do
     children = [
       # Starts a worker by calling: ST.Worker.start_link(arg)
       # {ST.Worker, arg}
+      ST.WorkflowProducer,
+      ST.WorkflowRunner
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
