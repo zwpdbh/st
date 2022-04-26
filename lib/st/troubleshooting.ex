@@ -2,28 +2,7 @@ defmodule ST.Troubleshooting do
   use GenServer
   @me __MODULE__
   def start_link(_args) do
-    known_issues = [
-      %{
-        message: "exceeding approved standardDSv4Family Cores quota",
-        step_name: "DeployKubernetesWindowsVmssClusterStep",
-        level: 3
-      },
-      %{
-        step_name: "DeployKubernetesVmssClusterStep",
-        level: 3,
-        message: "Input string was not in a correct format"
-      },
-      %{
-        message: "exceeding approved standardDSv4Family Cores quota",
-        step_name: "some step",
-        level: 2
-      },
-      %{
-        message: "Invalid input string",
-        step_name: "DeployKubernetesWindowsVmssClusterStep",
-        level: 1
-      }
-    ]
+    known_issues = ST.Handbook.get_deployment_service_known_issues()
 
     GenServer.start_link(
       __MODULE__,
