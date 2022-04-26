@@ -10,6 +10,7 @@ defmodule ST.Application do
     children = [
       # Starts a worker by calling: ST.Worker.start_link(arg)
       # {ST.Worker, arg}
+      ST.TroubleshootingSupervisor,
       ST.WorkflowProducer,
       ST.WorkflowRunner
     ]

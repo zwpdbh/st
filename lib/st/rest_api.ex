@@ -92,8 +92,15 @@ defmodule ST.RestAPI do
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         IO.puts("Not found :(")
 
+      {:ok, %HTTPoison.Response{status_code: 302}, body: body} ->
+        IO.inspect body
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         IO.inspect(reason)
+
+      ex ->
+        IO.puts "shouldn't be there"
+        IO>inspect ex
     end
   end
 
