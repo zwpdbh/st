@@ -19,8 +19,8 @@ defmodule ST.DeploymentService do
     |> Enum.map(fn x -> %{id: Map.get(x, "id"), status: Map.get(x, "status"), definition_name: Map.get(x, "definitionName"), created_at: Map.get(x, "createTime")} end)
   end
 
-  def troubleshooting() do
-    list_stopped_workflows()
+  def troubleshooting(including_terminated \\ false) do
+    list_stopped_workflows(including_terminated)
     |> Enum.map(fn %{id: id} -> get_workflow_detail(id) end)
     |> Enum.map(fn detail -> ST.Troubleshooting.troubleshooting_detail(detail) end)
   end
@@ -84,7 +84,8 @@ defmodule ST.DeploymentService do
 
   def clean_stopped_workflows(excluded, including_terminated \\ false) do
     num_processed =
-      list_stopped_workflows(including_terminated)
+      troubleshooting(including_terminated)
+      |> Enum.filter(fn x -> x.matched_issue.level == 3 end)
       |> Enum.map(fn x -> x.id end)
       |> MapSet.new()
       |> MapSet.difference(MapSet.new(excluded))
