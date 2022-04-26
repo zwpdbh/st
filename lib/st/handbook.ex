@@ -2,25 +2,35 @@ defmodule ST.Handbook do
   def get_deployment_service_known_issues do
     [
       %{
-        message: "exceeding approved standardDSv4Family Cores quota",
         step_name: "DeployKubernetesWindowsVmssClusterStep",
+        message: "exceeding approved standardDSv4Family Cores quota",
         level: 3
       },
       %{
+        step_name: "DeployKubernetesWindowsVmssClusterStep",
+        message: "Invalid input string",
+        level: 3
+      },
+      %{
+        step_name: "DeployKubernetesWindowsVmssClusterStep",
+        message: "Operation is not allowed: Another operation (Creating) is in progress",
+        level: 3
+      },            
+      %{
         step_name: "DeployKubernetesVmssClusterStep",
-        level: 3,
         message: "Input string was not in a correct format",
+        level: 3,
         contact: "zhaowei@microsoft.com"
       },
       %{
-        message: "exceeding approved standardDSv4Family Cores quota",
-        step_name: "some step",
+        step_name: "ValidatePodStatusStep",
+        message: "status Pending is not expected",
         level: 2
       },
       %{
-        message: "Invalid input string",
-        step_name: "DeployKubernetesWindowsVmssClusterStep",
-        level: 1
+        step_name: "AssignKubernetesMsiPermissionStep",
+        message: "The fabric operation failed",
+        level: 3
       }
     ]
   end
