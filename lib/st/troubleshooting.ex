@@ -9,6 +9,11 @@ defmodule ST.Troubleshooting do
         level: 3
       },
       %{
+        step_name: "DeployKubernetesVmssClusterStep",
+        level: 3,
+        message: "Input string was not in a correct format"
+      },
+      %{
         message: "exceeding approved standardDSv4Family Cores quota",
         step_name: "some step",
         level: 2

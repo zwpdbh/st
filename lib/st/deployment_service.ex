@@ -19,6 +19,12 @@ defmodule ST.DeploymentService do
     |> Enum.map(fn x -> %{id: Map.get(x, "id"), status: Map.get(x, "status"), definition_name: Map.get(x, "definitionName"), created_at: Map.get(x, "createTime")} end)
   end
 
+  def troubleshooting() do
+    list_stopped_workflows()
+    |> Enum.map(fn %{id: id} -> get_workflow_detail(id) end)
+    |> Enum.map(fn detail -> ST.Troubleshooting.troubleshooting_detail(detail) end)
+  end
+
   # Workflow.get_workflow_detail("576508bb-9257-4feb-b59b-34a5adfb29fa")
   def get_workflow_detail(workflow_id) do
     Api.request_access_token()
