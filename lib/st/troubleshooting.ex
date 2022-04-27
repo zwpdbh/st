@@ -63,3 +63,7 @@ defmodule ST.Troubleshooting do
     end
   end
 end
+
+# How to kill it:
+# Process.exit(Process.whereis(ST.Troubleshooting), :kill)
+# Process.whereis(ST.Troubleshooting) is used to get the pid from a registered process by its name

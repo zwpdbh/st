@@ -28,7 +28,7 @@ defmodule ST.DeploymentService do
   def troubleshooting_failed_ones(ids) when is_list(ids) do
     ids
     |> Enum.map(fn id -> get_workflow_detail(id) end)
-    |> Enum.map(fn detail -> ST.Troubleshooting.troubleshooting_detail(detail) end)    
+    |> Enum.map(fn detail -> ST.Troubleshooting.troubleshooting_detail(detail) end)
   end
 
   # Workflow.get_workflow_detail("576508bb-9257-4feb-b59b-34a5adfb29fa")
