@@ -42,6 +42,8 @@ defmodule ST.Workflow do
   end
 
   def handle_info({:update_steps, step_name}, %{execution_steps: steps} = workflow_instance) do
-    {:noreply, Map.replace(workflow_instance, :execution_steps, [step_name | steps])}
+    Logger.info( "????")
+    updated_state = Map.replace(workflow_instance, :execution_steps, [step_name | steps])
+    {:noreply, updated_state}
   end
 end
