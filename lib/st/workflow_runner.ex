@@ -21,22 +21,14 @@ defmodule ST.WorkflowRunner do
     {:consumer, initial_state, sub_opts}
   end
 
-  def handle_events([%{workflow_name: workflow_name, params: params}], _from, state) do
+  def handle_events([event], _from, state) do
     # Here each event currently is:
     #  %{args: %{subscription: "region_dev"}, workflow_name: "workflow01"}
 
     # TODO:: check with resource manager to confirm the resources are available to run a workflow
-    params =
-      params
-      |> Map.put_new(:execution_steps, [])
-      |> Map.put_new(:status, "ok")
-
-    with %{status: "ok"} <- apply(ST.Workflow, String.to_atom(workflow_name), [params]) do
-      Logger.info("workflow #{workflow_name} finished")
-    else
-      ex -> 
-      Logger.error("workflow #{workflow_name} failed: #{IO.inspect ex}")
-    end
+    pid = ST.Workflow.start_link(event)
+    IO.inspect ST.Workflow.execute(pid)
+    # TODO:: process execution result here?
 
     {:noreply, [], state}
   end
