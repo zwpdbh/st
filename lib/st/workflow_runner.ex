@@ -26,10 +26,15 @@ defmodule ST.WorkflowRunner do
     #  %{args: %{subscription: "region_dev"}, workflow_name: "workflow01"}
 
     # TODO:: check with resource manager to confirm the resources are available to run a workflow
-    pid = ST.Workflow.start_link(event)
-    IO.inspect ST.Workflow.execute(pid)
+    {:ok, pid} = ST.Workflow.start_link(event)
+    ST.Workflow.execute(pid)
     # TODO:: process execution result here?
 
     {:noreply, [], state}
+  end
+
+  def terminate(reason, state) do
+    IO.inspect reason
+    IO.inspect state
   end
 end
