@@ -8,6 +8,11 @@ defmodule ST.Handbook do
       },
       %{
         step_name: "DeployKubernetesWindowsVmssClusterStep",
+        message: "Input string was not in a correct format",
+        level: 3
+      },
+      %{
+        step_name: "DeployKubernetesWindowsVmssClusterStep",
         message: "Invalid input string",
         level: 3
       },

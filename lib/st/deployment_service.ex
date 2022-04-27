@@ -25,6 +25,12 @@ defmodule ST.DeploymentService do
     |> Enum.map(fn detail -> ST.Troubleshooting.troubleshooting_detail(detail) end)
   end
 
+  def troubleshooting_failed_ones(ids) when is_list(ids) do
+    ids
+    |> Enum.map(fn id -> get_workflow_detail(id) end)
+    |> Enum.map(fn detail -> ST.Troubleshooting.troubleshooting_detail(detail) end)    
+  end
+
   # Workflow.get_workflow_detail("576508bb-9257-4feb-b59b-34a5adfb29fa")
   def get_workflow_detail(workflow_id) do
     Api.request_access_token()
@@ -85,7 +91,7 @@ defmodule ST.DeploymentService do
   def clean_stopped_workflows(excluded, including_terminated \\ false) do
     num_processed =
       troubleshooting(including_terminated)
-      |> Enum.filter(fn x -> x.matched_issue.level == 3 end)
+      |> Enum.filter(fn x -> x.matched == true and x.info.level == 3 end)
       |> Enum.map(fn x -> x.id end)
       |> MapSet.new()
       |> MapSet.difference(MapSet.new(excluded))
