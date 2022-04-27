@@ -1,2 +1,7 @@
 * References 
 - [[https://docs.microsoft.com/en-us/rest/api/azure/][Azure REST API references]]
+  
+  
+* How to test workflow execution
+1. Start the project by ~iex -S mix~
+2. Run ~ST.WorkflowProducer.demo~

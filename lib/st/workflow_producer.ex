@@ -1,6 +1,6 @@
 defmodule ST.WorkflowProducer do
   use GenStage
-  
+
   require Logger
 
   def start_link(_args) do
@@ -14,19 +14,22 @@ defmodule ST.WorkflowProducer do
   end
 
   def handle_demand(demand, state) do
-    Logger.info("Receive demand for #{inspect demand} workflows with state: #{inspect state}")
+    Logger.info("Receive demand for #{inspect(demand)} workflows with state: #{inspect(state)}")
     events = []
     {:noreply, events, state}
   end
 
   def execute_workflows(workflows) when is_list(workflows) do
-    workflows = workflows |> Enum.map(fn each ->
-      Map.update!(
-        each,
-        :params,
-        fn params -> Map.put_new(params, :id, UUID.uuid4()) end)
-    end)
-    
+    workflows =
+      workflows
+      |> Enum.map(fn each ->
+        Map.update!(
+          each,
+          :params,
+          fn params -> Map.put_new(params, :id, UUID.uuid4()) end
+        )
+      end)
+
     GenStage.cast(__MODULE__, {:workflows, workflows})
   end
 
@@ -34,16 +37,15 @@ defmodule ST.WorkflowProducer do
     {:noreply, workflows, state}
   end
 
-  # ST.WorkflowProducer.test
-  def test do
+  # ST.WorkflowProducer.demo
+  def demo do
     workflows = [
       %{workflow_name: "workflow01", params: %{subscription: "region_dev"}},
-      %{workflow_name: "workflow02", params: %{subscription: "region_prod"}},
-      %{workflow_name: "workflow03", params: %{subscription: "region_dev"}},
-      %{workflow_name: "workflow04", params: %{subscription: "region_prod"}},
-      %{workflow_name: "workflow05", params: %{subscription: "region_dev"}},
-      %{workflow_name: "workflow06", params: %{subscription: "region_prod"}},
-      %{workflow_name: "workflow07", params: %{subscription: "region_dev"}}      
+      # %{workflow_name: "workflow02", params: %{subscription: "region_prod"}},
+      # %{workflow_name: "workflow03", params: %{subscription: "region_dev"}},
+      # %{workflow_name: "workflow01", params: %{subscription: "region_prod"}},
+      # %{workflow_name: "workflow02", params: %{subscription: "region_dev"}},
+      # %{workflow_name: "workflow03", params: %{subscription: "region_prod"}}
     ]
 
     execute_workflows(workflows)
