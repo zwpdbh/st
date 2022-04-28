@@ -34,15 +34,16 @@ defmodule ST.Troubleshooting do
     )
   end
 
+  # known_message is the message from handbook.ex
   def is_messages_matched(known_message, [head | tail]) do
     case String.contains?(head, known_message) do
       false -> is_messages_matched(known_message, tail)
-      true -> {true, known_message}
+      true -> known_message
     end
   end
 
   def is_messages_matched(_, []) do
-    {false, ""}
+    "unknown_error"
   end
 
   def handle_call(
@@ -50,16 +51,15 @@ defmodule ST.Troubleshooting do
          %{id: id, definition_name: definition_name, step_name: step_name, messages: messages}},
         _from,
         known_issues
-      ) do
-    with matched_issues <-
+  ) do
+    # 1. From handbook find all the records associated with a step, there could be multiple such records
+    # 2. Use each record's message to find out if it exists in the messages (from workflow instance)
+    # 3. At last, there should be only one record (given step_name and known_message)
+    with matched_ones <-
            known_issues
-           |> Enum.filter(fn %{step_name: known_step_name} -> known_step_name == step_name end),
-         true <- length(matched_issues) > 0,
-         matched_ones <-
-           matched_issues
+           |> Enum.filter(fn %{step_name: known_step_name} -> known_step_name == step_name end)
            |> Enum.filter(fn %{message: known_message} ->
-             {is_matched, _} = is_messages_matched(known_message, messages)
-             is_matched
+             is_messages_matched(known_message, messages) != "unknown_error"
            end),
          true <- length(matched_ones) == 1 do
       {:reply,
