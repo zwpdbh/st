@@ -19,6 +19,7 @@ defmodule ST.Troubleshooting do
         %{
           "id" => id,
           "executionPointers" => executionPointers,
+          "definitionName" => definition_name,
           "reference" => %{"exceptionMessages" => messages}
         } = _
       ) do
@@ -26,7 +27,11 @@ defmodule ST.Troubleshooting do
       Poison.decode!(executionPointers)
       |> List.last()
 
-    GenServer.call(@me, {:troubleshooting, %{id: id, step_name: step_name, messages: messages}})
+    GenServer.call(
+      @me,
+      {:troubleshooting,
+       %{id: id, definition_name: definition_name, step_name: step_name, messages: messages}}
+    )
   end
 
   def is_messages_matched(known_message, [head | tail]) do
@@ -41,7 +46,8 @@ defmodule ST.Troubleshooting do
   end
 
   def handle_call(
-        {:troubleshooting, %{id: id, step_name: step_name, messages: messages}},
+        {:troubleshooting,
+         %{id: id, definition_name: definition_name, step_name: step_name, messages: messages}},
         _from,
         known_issues
       ) do
@@ -56,10 +62,13 @@ defmodule ST.Troubleshooting do
              is_matched
            end),
          true <- length(matched_ones) == 1 do
-      {:reply, %{id: id, matched: true,  info: List.first(matched_ones)}, known_issues}
+      {:reply,
+       %{id: id, definition_name: definition_name, info: List.first(matched_ones)},
+       known_issues}
     else
       ex ->
-        {:reply, %{id: id, matched: false, info: ex}, known_issues}
+        {:reply, %{id: id, definition_name: definition_name, info: ex},
+         known_issues}
     end
   end
 end
