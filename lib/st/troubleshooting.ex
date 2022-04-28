@@ -63,11 +63,11 @@ defmodule ST.Troubleshooting do
            end),
          true <- length(matched_ones) == 1 do
       {:reply,
-       %{id: id, definition_name: definition_name, info: List.first(matched_ones)},
+       %{id: id, definition_name: definition_name, info: List.first(matched_ones), matched: true},
        known_issues}
     else
       ex ->
-        {:reply, %{id: id, definition_name: definition_name, info: ex},
+        {:reply, %{id: id, definition_name: definition_name, info: ex, matched: false},
          known_issues}
     end
   end
