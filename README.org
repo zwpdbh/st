@@ -5,3 +5,16 @@
 * How to test workflow execution
 1. Start the project by ~iex -S mix~
 2. Run ~ST.WorkflowProducer.demo~
+
+   
+* Concepts
+1. a workflow is a GenServer process which run multiple steps (pure functions) one after another.
+2. A workflow's associated steps are obtained from workflow_definition.
+3. a workflow_definition is simply a list of workflow steps
+   - This list only contains name of steps to be executed one after another.
+   - The workflow_definition doesn't care too much what params it needs.
+     - We could check a workflow's minimum required parameters somewhere.
+4. workflow_producer <---> workflow_runner is connected using GenStage to handle back-pressure.
+5. workflow_runner --> execute a workflow which is a GenServer process which handle different messages/events.
+   - The purpose of workflow_runner is to make sure a workflow's dependencies are ready before executing a workflow.
+6. workflow steps are defined in a module which contains pure functions independent to each other.

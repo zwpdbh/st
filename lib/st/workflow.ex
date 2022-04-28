@@ -16,10 +16,12 @@ defmodule ST.Workflow do
     {:ok, workflow_instance}
   end
 
+  # interface function for user to call
   def execute(pid) do
     GenServer.cast(pid, :execute)
   end
 
+  # start to execute a workflow which equals: workflow_definition + params(including context)
   def handle_cast(:execute, %{workflow_name: workflow_name} = workflow_instance) do
     with %{status: "ok"} <-
            apply(
@@ -41,9 +43,15 @@ defmodule ST.Workflow do
     IO.inspect(workflow_instance)
   end
 
-  def handle_info({:update_steps, step_name}, %{execution_steps: steps} = workflow_instance) do
-    Logger.info( "????")
-    updated_state = Map.replace(workflow_instance, :execution_steps, [step_name | steps])
-    {:noreply, updated_state}
-  end
+
+  
+  # The reason this doens't work is because the GenServer's state is only got udpated between GenServer's callbacks.
+  # So, when the execute workflow is executed, its state will not be modified for GenServer.
+  # def handle_info({:update_steps, step_name}, %{execution_steps: steps} = workflow_instance) do
+  #   Logger.info("update_step: #{step_name}")
+  #   workflow_instance = Map.replace(workflow_instance, :execution_steps, [step_name | steps])
+  #   Logger.info("updated_steps: #{Map.fetch!(workflow_instance, :execution_steps)}")
+    
+  #   {:noreply, workflow_instance}
+  # end
 end

@@ -24,12 +24,7 @@ defmodule ST.WorkflowProducer do
       workflows
       |> Enum.map(fn each ->
         Map.put_new(each, :id, UUID.uuid4())
-        # Map.update!(
-        #   each,
-        #   :params,
-        #   fn params -> Map.put_new(params, :id, UUID.uuid4()) end
-        # )
-      end)
+    end)
 
     GenStage.cast(__MODULE__, {:workflows, workflows})
   end
