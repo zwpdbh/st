@@ -61,7 +61,7 @@ defmodule ST.Troubleshooting do
            |> Enum.filter(fn %{message: known_message} ->
              is_messages_matched(known_message, messages) != "unknown_error"
            end),
-         true <- length(matched_ones) == 1 do
+         true <- length(matched_ones) >= 1 do
       {:reply,
        %{id: id, definition_name: definition_name, info: List.first(matched_ones), matched: true},
        known_issues}
