@@ -6,7 +6,6 @@ defmodule ST.RestAPI do
   @client_id "2470ca86-3843-4aa2-95b8-97d3a912ff69"
   @tenant "72f988bf-86f1-41af-91ab-2d7cd011db47"
   @scope "https://microsoft.onmicrosoft.com/3b4ae08b-9919-4749-bb5b-7ed4ef15964d/.default"
-
   @api_endpoint "https://xscndeploymentservice.westus2.cloudapp.azure.com/api"
 
   @moduledoc """
@@ -16,6 +15,29 @@ defmodule ST.RestAPI do
     url = "https://login.microsoftonline.com/#{@tenant}/oauth2/v2.0/token"
 
     case HTTPoison.post(url, urlencoded_body(), header()) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        body
+        |> Poison.decode()
+        |> fetch_access_token
+
+      # |> IO.puts
+
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        IO.puts("Not found :(")
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        IO.inspect(reason)
+    end
+  end
+
+  def request_access_token_for_subscription() do
+    request_access_token("/subscriptions/33922553-c28a-4d50-ac93-a5c682692168/.default")
+  end
+  
+  def request_access_token(scope) do
+    url = "https://login.microsoftonline.com/#{@tenant}/oauth2/v2.0/token"
+
+    case HTTPoison.post(url, urlencoded_body(scope), header()) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         body
         |> Poison.decode()
@@ -141,6 +163,16 @@ defmodule ST.RestAPI do
       "client_id" => @client_id,
       "client_secret" => @secret,
       "scope" => @scope,
+      "grant_type" => "client_credentials"
+    }
+    |> URI.encode_query()
+  end
+
+  def urlencoded_body(scope) do
+    %{
+      "client_id" => @client_id,
+      "client_secret" => @secret,
+      "scope" => scope,
       "grant_type" => "client_credentials"
     }
     |> URI.encode_query()
