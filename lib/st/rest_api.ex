@@ -124,7 +124,7 @@ defmodule ST.RestAPI do
         IO.inspect(reason)
 
       ex ->
-        IO.puts "shouldn't be there"
+        IO.puts "error when get workflow from workflow_id: #{workflow_id}"
         IO>inspect ex
     end
   end

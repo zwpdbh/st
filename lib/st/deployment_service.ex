@@ -1,6 +1,6 @@
 defmodule ST.DeploymentService do
   alias ST.RestAPI, as: Api
-  
+
   def create_workflow(definition_name \\ "K8sDynamicCsiResize") do
     Api.request_access_token()
     |> Api.post_workflow(definition_name)
@@ -16,7 +16,14 @@ defmodule ST.DeploymentService do
         Map.get(x, "status") === "Suspended"
       end
     end)
-    |> Enum.map(fn x -> %{id: Map.get(x, "id"), status: Map.get(x, "status"), definition_name: Map.get(x, "definitionName"), created_at: Map.get(x, "createTime")} end)
+    |> Enum.map(fn x ->
+      %{
+        id: Map.get(x, "id"),
+        status: Map.get(x, "status"),
+        definition_name: Map.get(x, "definitionName"),
+        created_at: Map.get(x, "createTime")
+      }
+    end)
   end
 
   def troubleshooting(including_terminated \\ false) do
@@ -37,13 +44,18 @@ defmodule ST.DeploymentService do
     |> Api.get_workflow(workflow_id)
   end
 
-  def is_resource_group_created?(detail) do
-    definition_name = Map.get(detail, "definitionName")
-    definition_version = Map.get(detail, "definitionVersion")
-    created_time = Map.get(detail, "createTime")
-    id = Map.get(detail, "id")
-    IO.puts("\ncheck rg for #{definition_name}:#{definition_version}, created at: #{created_time}, id: #{id}")
-    
+  def is_resource_group_created?(
+        %{
+          "definitionName" => definition_name,
+          "definitionVersion" => definition_version,
+          "id" => id,
+          "createTime" => created_time
+        } = detail
+      ) do
+    IO.puts(
+      "\ncheck rg for #{definition_name}:#{definition_version}, created at: #{created_time}, id: #{id}"
+    )
+
     is_created =
       Poison.decode!(Map.get(detail, "executionPointers"))
       |> Enum.filter(fn x ->
@@ -76,13 +88,13 @@ defmodule ST.DeploymentService do
   end
 
   def clean_one_stopped_workflow_from_id(id) do
-    case get_workflow_detail(id) |> is_resource_group_created? do
-      {:ok, rg} ->
-        case terminate_workflow(id) do
-          true -> delete_az_rg(rg)
-          _ -> IO.puts("terminate workflow id: #{id} failed")
-        end
-
+    with detail <- get_workflow_detail(id),
+         {:ok, rg} <- is_resource_group_created?(detail) do
+      case terminate_workflow(id) do
+        true -> delete_az_rg(rg)
+        _ -> IO.puts("terminate workflow id: #{id} failed")
+      end
+    else
       _ ->
         IO.puts("no need to clean up #{id}, because it doesn't create resource group yet")
     end
@@ -146,6 +158,54 @@ defmodule ST.DeploymentService do
         :timer.sleep(2000)
         check_status_loop(id)
     end
+  end
+
+  # use Aurora_05_05.txt as example
+  def get_workflows_from_aurora_log(filename) do
+    path = "d:/code/elixir-programming/st/../../work-notes-for-ms/Storage_AKS_log/"
+    file_full_name = Path.join([path, filename])
+
+    case File.read(file_full_name) do
+      {:ok, content} ->
+        IO.puts("related workflows are:")
+
+        content
+        |> String.split("\n")
+        |> Enum.map(fn x ->
+          Regex.named_captures(
+            ~r/.*(?<workflow_id>[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}).*/,
+            x
+          )
+        end)
+        |> Enum.filter(fn x ->
+          case x do
+            %{"workflow_id" => _} -> true
+            _ -> false
+          end
+        end)
+        |> Enum.reduce(MapSet.new(), fn %{"workflow_id" => x}, acc ->
+          case MapSet.member?(acc, x) do
+            true -> acc
+            false -> MapSet.put(acc, x)
+          end
+        end)
+        |> MapSet.to_list()
+
+      {:error, reason} ->
+        IO.puts(reason)
+        []
+    end
+  end
+
+  def clean_workflows_from_aurora_log(filename) do
+    get_workflows_from_aurora_log(filename)
+    |> Enum.with_index
+    |> Enum.each( fn {id, i} ->
+      spawn(fn ->
+        Process.sleep(i * 1000)
+        clean_one_stopped_workflow_from_id(id)
+      end)
+    end)
   end
 end
 

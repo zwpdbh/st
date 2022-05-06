@@ -3,7 +3,7 @@ defmodule ST.Handbook do
     [
       %{
         step_name: "DeployKubernetesWindowsVmssClusterStep",
-        message: "exceeding approved standardDSv4Family Cores quota",
+        message: "QuotaExceeded",
         level: 3
       },
       %{
