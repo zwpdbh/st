@@ -36,6 +36,11 @@ defmodule ST.Handbook do
         step_name: "AssignKubernetesMsiPermissionStep",
         message: "The fabric operation failed",
         level: 3
+      },
+      %{
+        step_name: "AssignKubernetesMsiPermissionStep",
+        message: "Internal error encountered",
+        level: 3
       }
     ]
   end
