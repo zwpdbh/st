@@ -49,6 +49,11 @@ defmodule ST.DeploymentService do
     |> Api.get_resource_groups()
   end
 
+  def list_storage_accounts() do
+    Api.request_access_token("https://management.azure.com/.default")
+    |> Api.list_storage_accounts()    
+  end
+
   def test01() do
     Api.request_access_token("https://management.azure.com/.default")
     |> Api.get_workflows()
@@ -212,6 +217,8 @@ defmodule ST.DeploymentService do
     end
   end
 
+  # ST.DeploymentService.clean_workflows_from_aurora_log("Aurora_05_08.txt")
+  # Where Storage_AKS_log/Aurora_05_08.txt is from d:/code/work-notes-for-ms/
   def clean_workflows_from_aurora_log(filename) do
     get_workflows_from_aurora_log(filename)
     |> Enum.with_index

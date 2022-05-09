@@ -2,6 +2,11 @@ defmodule ST.Handbook do
   def get_deployment_service_known_issues do
     [
       %{
+        step_name: "ScaleKubernetesNodePoolStep",
+        message: "exceeding approved",
+        level: 3
+      },
+      %{
         step_name: "DeployKubernetesWindowsVmssClusterStep",
         message: "QuotaExceeded",
         level: 3
@@ -41,7 +46,12 @@ defmodule ST.Handbook do
         step_name: "AssignKubernetesMsiPermissionStep",
         message: "Internal error encountered",
         level: 3
-      }
+      },
+      %{
+        step_name: "AssignKubernetesMsiPermissionStep",
+        message: "The request failed due to conflict with a concurrent request",
+        level: 3
+      }      
     ]
   end
 end

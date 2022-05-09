@@ -113,6 +113,19 @@ defmodule ST.RestAPI do
     HTTPoison.get(url, headers)
   end
 
+  def list_storage_accounts(token) do
+    url = "https://management.azure.com/subscriptions/33922553-c28a-4d50-ac93-a5c682692168/providers/Microsoft.Storage/storageAccounts?api-version=2021-09-01"
+
+    headers = [
+      {"Content-type", "application/json"},
+      {"Authorization", "Bearer #{token}"},
+      {"accept", "text/plain"}
+    ]
+
+    HTTPoison.get(url, headers)
+    
+  end
+
   def get_workflow(token, workflow_id) do
     url = "#{@api_endpoint}/Workflow/#{workflow_id}"
 

@@ -1,4 +1,4 @@
-defmodule ST.AZ.ResourceGroup do
+defmodule ST.Azure.ResourceGroup do
   def list_resource_groups_from_subscription(token, subscription_id) do
     url = "https://management.azure.com/subscriptions/#{subscription_id}/resourcegroups?api-version=2021-04-01"
 
