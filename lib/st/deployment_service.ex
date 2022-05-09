@@ -1,13 +1,21 @@
 defmodule ST.DeploymentService do
   alias ST.RestAPI, as: Api
+  alias ST.Azure.AzureEnvironment
+  alias ST.Azure.Auth
 
+  
+  def acquire_access_token() do
+    AzureEnvironment.get(:deployment_service)
+    |> Auth.request_access_token
+  end
+  
   def create_workflow(definition_name \\ "K8sDynamicCsiResize") do
-    Api.request_access_token()
+    acquire_access_token()
     |> Api.post_workflow(definition_name)
   end
 
   def list_stopped_workflows(including_terminated \\ false) do
-    Api.request_access_token()
+    acquire_access_token()
     |> Api.get_workflows()
     |> Enum.filter(fn x ->
       if including_terminated do
@@ -40,29 +48,9 @@ defmodule ST.DeploymentService do
 
   # Workflow.get_workflow_detail("576508bb-9257-4feb-b59b-34a5adfb29fa")
   def get_workflow_detail(workflow_id) do
-    Api.request_access_token()
+    acquire_access_token()
     |> Api.get_workflow(workflow_id)
   end
-
-  def list_resource_groups() do
-    Api.request_access_token("https://management.azure.com/.default")
-    |> Api.get_resource_groups()
-  end
-
-  def list_storage_accounts() do
-    Api.request_access_token("https://management.azure.com/.default")
-    |> Api.list_storage_accounts()    
-  end
-
-  def test01() do
-    Api.request_access_token("https://management.azure.com/.default")
-    |> Api.get_workflows()
-  end
-
-  def test02() do
-    Api.request_access_token()
-    |> Api.get_workflows()
-  end  
 
   def is_resource_group_created?(
         %{
@@ -98,6 +86,7 @@ defmodule ST.DeploymentService do
   end
 
   def terminate_workflow(workflow_id) do
+    acquire_access_token()
     Api.request_access_token()
     |> Api.put_workflow_terminate(workflow_id)
   end

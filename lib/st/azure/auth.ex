@@ -1,4 +1,6 @@
 defmodule ST.Azure.Auth do
+  require Logger
+  
   alias ST.RestClient
   def request_access_token(%{
         tenant_id: tenant_id,

@@ -1,6 +1,6 @@
 defmodule ST.Azure.AzureEnvironment do
 
-  def get(:deployment_params) do
+  def get(:deployment_service) do
     deployment_service_sp()
   end
 
