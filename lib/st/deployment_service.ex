@@ -44,6 +44,21 @@ defmodule ST.DeploymentService do
     |> Api.get_workflow(workflow_id)
   end
 
+  def list_resource_groups() do
+    Api.request_access_token("https://management.azure.com/.default")
+    |> Api.get_resource_groups()
+  end
+
+  def test01() do
+    Api.request_access_token("https://management.azure.com/.default")
+    |> Api.get_workflows()
+  end
+
+  def test02() do
+    Api.request_access_token()
+    |> Api.get_workflows()
+  end  
+
   def is_resource_group_created?(
         %{
           "definitionName" => definition_name,

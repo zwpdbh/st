@@ -101,6 +101,18 @@ defmodule ST.RestAPI do
     end
   end
 
+  def get_resource_groups(token) do
+    url = "https://management.azure.com/subscriptions/33922553-c28a-4d50-ac93-a5c682692168/resourcegroups?api-version=2021-04-01"
+
+    headers = [
+      {"Content-type", "application/json"},
+      {"Authorization", "Bearer #{token}"},
+      {"accept", "text/plain"}
+    ]
+
+    HTTPoison.get(url, headers)
+  end
+
   def get_workflow(token, workflow_id) do
     url = "#{@api_endpoint}/Workflow/#{workflow_id}"
 
