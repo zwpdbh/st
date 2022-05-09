@@ -1,4 +1,4 @@
-defmodule ST.RestClientTest do
+defmodule ST.Azure.AuthTest do
   use ExUnit.Case, async: true
 
   setup do
@@ -15,7 +15,7 @@ defmodule ST.RestClientTest do
 
   describe "client credential" do
     test "azure credential", %{input01: azure_credential} do
-      IO.inspect ST.RestClient.request_access_token(azure_credential)
+      IO.inspect ST.Azure.Auth.request_access_token(azure_credential)
     end
   end
 end
