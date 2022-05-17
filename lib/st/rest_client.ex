@@ -5,7 +5,20 @@ defmodule ST.RestClient do
     case HTTPoison.post(url, body, Enum.to_list(headers)) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         Poison.decode(body)
-      {:ok, %HTTPoison.Response{status_code: 302} = response} ->
+      {:ok, %HTTPoison.Response{status_code: _} = response} ->
+        response
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        %{code: 404}
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        %{error: reason}
+    end    
+  end
+
+  def handle_put_request(url, body, headers) when is_map(headers) do
+    case HTTPoison.put(url, body, Enum.to_list(headers)) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        Poison.decode(body)
+      {:ok, %HTTPoison.Response{status_code: _} = response} ->
         response
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         %{code: 404}

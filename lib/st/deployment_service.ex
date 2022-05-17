@@ -1,5 +1,4 @@
 defmodule ST.DeploymentService do
-  alias ST.RestAPI, as: Api
   alias ST.RestClient
   alias ST.Azure.AzureEnvironment
   alias ST.Azure.Auth
@@ -16,8 +15,15 @@ defmodule ST.DeploymentService do
   # end
 
   def list_stopped_workflows(including_terminated \\ false) do
-    acquire_access_token()
-    |> Api.get_workflows()
+    url = "#{@api_endpoint}/Workflow"
+    token = acquire_access_token()
+
+    headers = RestClient.init_headers()
+    |> RestClient.set_auth_bearer_token(token)
+
+    {:ok, workflows } = RestClient.handle_get_request(url, headers)
+
+    workflows
     |> Enum.filter(fn x ->
       if including_terminated do
         Map.get(x, "status") === "Suspended" or Map.get(x, "status") === "Terminated"
@@ -87,17 +93,17 @@ defmodule ST.DeploymentService do
   end
 
   def terminate_workflow(workflow_id) do
-    acquire_access_token()
-    |> Api.put_workflow_terminate(workflow_id)
+    # acquire_access_token()
+    # |> Api.put_workflow_terminate(workflow_id)
     
-    # url = "#{@api_endpoint}/Workflow/#{workflow_id}/terminate"
-    # token = acquire_access_token()
+    url = "#{@api_endpoint}/Workflow/#{workflow_id}/terminate"
+    token = acquire_access_token()
 
-    # headers =
-    #   RestClient.init_headers()
-    #   |> RestClient.set_auth_bearer_token(token)
+    headers =
+      RestClient.init_headers()
+      |> RestClient.set_auth_bearer_token(token)
 
-    # RestClient.handle_post_request(url, "", headers)
+    RestClient.handle_put_request(url, "", headers)
   end
 
   def delete_az_rg(resource_group_name) do
@@ -109,7 +115,7 @@ defmodule ST.DeploymentService do
     with detail <- get_workflow_detail(id),
          {:ok, rg} <- is_resource_group_created?(detail) do
       case terminate_workflow(id) do
-        true -> delete_az_rg(rg)
+        {:ok, true} -> delete_az_rg(rg)
         _ -> IO.puts("terminate workflow id: #{id} failed")
       end
     else

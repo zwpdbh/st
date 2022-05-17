@@ -154,26 +154,27 @@ defmodule ST.RestAPI do
   #   end
   # end
 
-  def put_workflow_terminate(token, workflow_id) do
-    url = "#{@api_endpoint}/Workflow/#{workflow_id}/terminate"
+  # def put_workflow_terminate(token, workflow_id) do
+  #   url = "#{@api_endpoint}/Workflow/#{workflow_id}/terminate"
 
-    headers = [
-      {"Content-type", "application/json"},
-      {"Authorization", "Bearer #{token}"},
-      {"accept", "text/plain"}
-    ]
+  #   headers = [
+  #     {"Content-type", "application/json"},
+  #     {"Authorization", "Bearer #{token}"},
+  #     {"accept", "text/plain"}
+  #   ]
 
-    case HTTPoison.put(url, "", headers) do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        Poison.decode!(body)
+  #   case HTTPoison.put(url, "", headers) do
+  #     {:ok, %HTTPoison.Response{status_code: 200, body: body} = response} ->
+  #       # Poison.decode!(body)
+  #       response
 
-      {:ok, %HTTPoison.Response{status_code: 404}} ->
-        IO.puts("Not found :(")
+  #     {:ok, %HTTPoison.Response{status_code: 404}} ->
+  #       IO.puts("Not found :(")
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect(reason)
-    end
-  end
+  #     {:error, %HTTPoison.Error{reason: reason}} ->
+  #       IO.inspect(reason)
+  #   end
+  # end
 
   # defp fetch_access_token({:ok, %{"access_token" => access_token}}) do
   #   access_token
