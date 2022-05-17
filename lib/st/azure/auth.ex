@@ -20,7 +20,6 @@ defmodule ST.Azure.Auth do
 
     headers = %{}
     |> Map.put_new("Content-type", "application/x-www-form-urlencoded")
-    |> Enum.into([])
 
     with {:ok, %{"access_token" => access_token}} <- RestClient.handle_post_request(url, body, headers) do
       access_token

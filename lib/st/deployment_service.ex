@@ -1,18 +1,19 @@
 defmodule ST.DeploymentService do
   alias ST.RestAPI, as: Api
+  alias ST.RestClient
   alias ST.Azure.AzureEnvironment
   alias ST.Azure.Auth
 
-  
+  @api_endpoint "https://xscndeploymentservice.westus2.cloudapp.azure.com/api"
   def acquire_access_token() do
     AzureEnvironment.get(:deployment_service)
-    |> Auth.request_access_token
+    |> Auth.request_access_token()
   end
-  
-  def create_workflow(definition_name \\ "K8sDynamicCsiResize") do
-    acquire_access_token()
-    |> Api.post_workflow(definition_name)
-  end
+
+  # def create_workflow(definition_name \\ "K8sDynamicCsiResize") do
+  #   acquire_access_token()
+  #   |> Api.post_workflow(definition_name)
+  # end
 
   def list_stopped_workflows(including_terminated \\ false) do
     acquire_access_token()
@@ -49,7 +50,7 @@ defmodule ST.DeploymentService do
   # Workflow.get_workflow_detail("576508bb-9257-4feb-b59b-34a5adfb29fa")
   def get_workflow_detail(workflow_id) do
     acquire_access_token()
-    |> Api.get_workflow(workflow_id)
+    |> get_workflow(workflow_id)
   end
 
   def is_resource_group_created?(
@@ -87,7 +88,6 @@ defmodule ST.DeploymentService do
 
   def terminate_workflow(workflow_id) do
     acquire_access_token()
-    Api.request_access_token()
     |> Api.put_workflow_terminate(workflow_id)
   end
 
@@ -136,20 +136,20 @@ defmodule ST.DeploymentService do
 
   # Workflow.monitor_workflow_execution("K8sDynamicCsiResize")
   # It create and moniotor a workflow's status
-  def monitor_workflow_execution(definition_name) do
-    case create_workflow(definition_name) do
-      {:ok, id} ->
-        t1 = DateTime.utc_now()
-        IO.puts("#{id} created, begin monitoring")
-        check_status_loop(id)
+  # def monitor_workflow_execution(definition_name) do
+  #   case create_workflow(definition_name) do
+  #     {:ok, id} ->
+  #       t1 = DateTime.utc_now()
+  #       IO.puts("#{id} created, begin monitoring")
+  #       check_status_loop(id)
 
-        t2 = DateTime.utc_now()
-        IO.puts("Duration: #{DateTime.diff(t2, t1)} seconds")
+  #       t2 = DateTime.utc_now()
+  #       IO.puts("Duration: #{DateTime.diff(t2, t1)} seconds")
 
-      {:error} ->
-        IO.puts("workflow for #{definition_name} failed.")
-    end
-  end
+  #     {:error} ->
+  #       IO.puts("workflow for #{definition_name} failed.")
+  #   end
+  # end
 
   def check_status_loop(id) do
     case get_workflow_detail(id) do
@@ -210,13 +210,24 @@ defmodule ST.DeploymentService do
   # Where Storage_AKS_log/Aurora_05_08.txt is from d:/code/work-notes-for-ms/
   def clean_workflows_from_aurora_log(filename) do
     get_workflows_from_aurora_log(filename)
-    |> Enum.with_index
-    |> Enum.each( fn {id, i} ->
+    |> Enum.with_index()
+    |> Enum.each(fn {id, i} ->
       spawn(fn ->
         Process.sleep(i * 1000)
         clean_one_stopped_workflow_from_id(id)
       end)
     end)
+  end
+
+  def get_workflow(token, workflow_id) do
+    url = "#{@api_endpoint}/Workflow/#{workflow_id}"
+
+    headers =
+      RestClient.init_headers()
+      |> RestClient.set_auth_bearer_token(token)
+
+    {:ok, body} = RestClient.handle_get_request(url, headers)
+    body
   end
 end
 
