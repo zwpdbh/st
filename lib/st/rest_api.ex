@@ -2,12 +2,12 @@ defmodule ST.RestAPI do
   # This value is from the client secret's value
   # Client refers the application registered from Azure Active Directory --> Enterprise applications (zwpdbh)
   # That tenant is checked from: Tenant properties -- Tenant ID across multiple subscriptions
-  @secret "2y~8Q~blSah_XVUIGOzQ9IAzpyCZ1PicJCiBtbUc" 
-  @client_id "2470ca86-3843-4aa2-95b8-97d3a912ff69"
-  @tenant "72f988bf-86f1-41af-91ab-2d7cd011db47"
-  @scope "https://microsoft.onmicrosoft.com/3b4ae08b-9919-4749-bb5b-7ed4ef15964d/.default"
-   @api_endpoint "https://xscndeploymentservice.westus2.cloudapp.azure.com/api"
-
+  # @secret "2y~8Q~blSah_XVUIGOzQ9IAzpyCZ1PicJCiBtbUc" 
+  # @client_id "2470ca86-3843-4aa2-95b8-97d3a912ff69"
+  # @tenant "72f988bf-86f1-41af-91ab-2d7cd011db47"
+  # @scope "https://microsoft.onmicrosoft.com/3b4ae08b-9919-4749-bb5b-7ed4ef15964d/.default" 
+  @api_endpoint "https://xscndeploymentservice.westus2.cloudapp.azure.com/api"
+  
   @moduledoc """
   A HTTP client for doing RESTful action for DeploymentService.
   """

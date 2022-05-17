@@ -5,6 +5,8 @@ defmodule ST.RestClient do
     case HTTPoison.post(url, body, Enum.to_list(headers)) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         Poison.decode(body)
+      {:ok, %HTTPoison.Response{status_code: 302} = response} ->
+        response
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         %{code: 404}
       {:error, %HTTPoison.Error{reason: reason}} ->

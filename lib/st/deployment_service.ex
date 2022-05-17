@@ -89,6 +89,15 @@ defmodule ST.DeploymentService do
   def terminate_workflow(workflow_id) do
     acquire_access_token()
     |> Api.put_workflow_terminate(workflow_id)
+    
+    # url = "#{@api_endpoint}/Workflow/#{workflow_id}/terminate"
+    # token = acquire_access_token()
+
+    # headers =
+    #   RestClient.init_headers()
+    #   |> RestClient.set_auth_bearer_token(token)
+
+    # RestClient.handle_post_request(url, "", headers)
   end
 
   def delete_az_rg(resource_group_name) do
