@@ -149,23 +149,6 @@ defmodule ST.DeploymentService do
     IO.puts("Process total: #{num_processed}")
   end
 
-  # Workflow.monitor_workflow_execution("K8sDynamicCsiResize")
-  # It create and moniotor a workflow's status
-  # def monitor_workflow_execution(definition_name) do
-  #   case create_workflow(definition_name) do
-  #     {:ok, id} ->
-  #       t1 = DateTime.utc_now()
-  #       IO.puts("#{id} created, begin monitoring")
-  #       check_status_loop(id)
-
-  #       t2 = DateTime.utc_now()
-  #       IO.puts("Duration: #{DateTime.diff(t2, t1)} seconds")
-
-  #     {:error} ->
-  #       IO.puts("workflow for #{definition_name} failed.")
-  #   end
-  # end
-
   def check_status_loop(id) do
     case get_workflow_detail(id) do
       %{"status" => "Completed"} ->

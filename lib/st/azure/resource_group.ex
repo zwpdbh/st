@@ -11,4 +11,6 @@ defmodule ST.Azure.ResourceGroup do
     {:ok, %HTTPoison.Response{status_code: 200, body: body}} = HTTPoison.get(url, headers)
     body
   end
+
+  
 end
