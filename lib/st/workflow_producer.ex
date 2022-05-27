@@ -1,6 +1,11 @@
 # This module is used to produce workflow configurations which is received by workflow_runner.
 # workflow producer receives request to execute some workflow, and it generate workflow settings and pass them to workflow_runner.
 # workflow_producer <--> workflow_runner use GenStage to handle back presures because workflow_runner may not be able to execute a workflow fast enough.
+# A dialog may like this:
+# A WorkflowProducer is like some project manager, it has multiple workers(WorkflowRunner), and each Worker only does one job at a time (run a workflow).
+# The producer send worker some A-job to run.
+# A worker check if something is available for running such job, if not it wait or report to producer what it needs.
+# A worker monitor the job's running status and ask for next one if job is finished.
 defmodule ST.WorkflowProducer do
   use GenStage
   require Logger
