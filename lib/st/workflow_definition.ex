@@ -1,4 +1,5 @@
 # This module is responsible to build workflow from existing workflow_steps
+# It should parse user input and produce valid workflow steps and their sequence to be run inside a workflow.
 defmodule ST.WorkflowDefinition do
   use GenServer
   @me __MODULE__
@@ -17,7 +18,14 @@ defmodule ST.WorkflowDefinition do
     {:ok, definitions}
   end
 
+  # From user input workflow definitions to get actual steps which are needed to be executed.
   def parse(input) when is_binary(input) do
-    # TODO:: how to parse ??
+    GenServer.call(@me, {:workflow_definition, input})
   end
+
+  # TODO parse it properly
+  def handle_call({:workflow_definition, workflow_name}, _from , state) do
+    {:reply, Map.get(state, workflow_name)}
+  end
+  
 end

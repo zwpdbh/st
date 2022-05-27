@@ -1,4 +1,9 @@
-# This module contains pure functions which do some operations
+# A Workflow is a GenServer Process its state includes
+# 1) a seriece of workflow steps
+# 2) currently which step is running its state (waiting, running, failed or succeed)
+# A Workflow is 1:1 mapping for a WorkflowRunner.
+# While a WorkflowRunner represent a single person whose job is to run a workflow one at a time, a Workflow represent the object of such a job.
+# A persion run a Worflow by running some steps and observing the result and run next other steps.
 defmodule ST.Workflow do
   use GenServer
   require Logger
@@ -25,7 +30,7 @@ defmodule ST.Workflow do
   def handle_cast(:execute, %{workflow_name: workflow_name} = workflow_instance) do
     with %{status: "ok"} <-
            apply(
-             ST.WorkflowImpl,
+             ST.WorkflowSteps,
              String.to_atom(workflow_name),
              [Map.put_new(workflow_instance, :workflow_pid, self())]
            ) do

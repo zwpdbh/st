@@ -1,6 +1,8 @@
+# This module is used to produce workflow configurations which is received by workflow_runner.
+# workflow producer receives request to execute some workflow, and it generate workflow settings and pass them to workflow_runner.
+# workflow_producer <--> workflow_runner use GenStage to handle back presures because workflow_runner may not be able to execute a workflow fast enough.
 defmodule ST.WorkflowProducer do
   use GenStage
-
   require Logger
 
   def start_link(_args) do

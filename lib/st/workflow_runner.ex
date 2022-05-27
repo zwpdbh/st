@@ -1,7 +1,10 @@
-# WorkflowRunner module is used to
-# Prepare workfow instance to run from workflow definition/name from client
-# It handle a prepared workflow instance including its dependent resources/settings to run it.
-# The actually running is using WorkflowModule which is GenServer
+# A WorkflowRunner receive events from workflow which is a request to run a workflow with its configuration.
+# It represents the handling of a workflow execution.
+# A WorkflowRunner currently only handle one workflow request one at a time.
+# A WorkflowRunner is 1:1 for a Workflow
+# A WorkflowRunner represent a dedicated virtual person who keep observing the execution of a Workflow and decide what to do next if something happended.
+# For example, if a workflow is suspended because one of its steps failed, what should be doen. There could be multiple choices for that.
+# Anything needed for a workflow execution but not related with that workflow's main purpose should be hanlded here. For example, clean up, etc.
 defmodule ST.WorkflowRunner do
   use GenStage
   require Logger
@@ -22,7 +25,7 @@ defmodule ST.WorkflowRunner do
   end
 
   def handle_events([event], _from, state) do
-    # Here each event currently is:
+    # Here each event is:
     #  %{args: %{subscription: "region_dev"}, workflow_name: "workflow01"}
 
     # TODO:: check with resource manager to confirm the resources are available to run a workflow

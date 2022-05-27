@@ -1,4 +1,4 @@
-defmodule ST.WorkflowImpl do
+defmodule ST.WorkflowSteps do
   require Logger
   
   def step01(%{workflow_pid: pid} = params) do
