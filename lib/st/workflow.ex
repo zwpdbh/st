@@ -12,36 +12,26 @@ defmodule ST.Workflow do
     GenServer.start_link(__MODULE__, workflow_instance)
   end
 
-  def init(workflow_instance) do
-    workflow_instance =
+  def init(%{workflow_name: workflow_name} = workflow_instance) do
+    workflow_steps =  workflow_name
+    |> ST.WorkflowDefinition.parse
+    |> Enum.with_index
+    |> Enum.map(fn {step_name, index} -> %{step_name => "todo", "index" => index}  end)
+    
+    updated_workflow_instance =
       workflow_instance
-      |> Map.put_new(:execution_steps, [])
-      |> Map.put_new(:status, "ok")
+      |> Map.put_new(:execution_steps, workflow_steps)
 
-    {:ok, workflow_instance}
+    {:ok, updated_workflow_instance}
   end
 
   # interface function for user to call
   def execute(pid) do
-    GenServer.cast(pid, :execute)
+    GenServer.call(pid, :execute)
   end
 
-  # start to execute a workflow which equals: workflow_definition + params(including context)
-  def handle_cast(:execute, %{workflow_name: workflow_name} = workflow_instance) do
-    with %{status: "ok"} <-
-           apply(
-             ST.WorkflowSteps,
-             String.to_atom(workflow_name),
-             [Map.put_new(workflow_instance, :workflow_pid, self())]
-           ) do
-      Logger.info("workflow #{workflow_name} finished")
-    else
-      ex ->
-        Logger.error("workflow #{workflow_name} failed")
-        IO.inspect(ex)
-    end
-
-    {:noreply, workflow_instance}
+  def handle_call(:execute, _from, workflow_instance) do
+    {:reply, workflow_instance, "updated_workflow_instance"}
   end
 
   def terminate(_reason, workflow_instance) do

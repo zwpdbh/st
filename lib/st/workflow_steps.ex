@@ -1,11 +1,8 @@
 defmodule ST.WorkflowSteps do
   require Logger
   
-  def step01(%{workflow_pid: pid} = params) do
-    Logger.info("start step01 with params: #{inspect(params)}")
-
-    send(pid, {:update_steps, "step01"})
-
+  def step01(params)) do
+    Logger.info("start step01 with params: #{inspect(params)}")                      
     case work() do
       true ->
         # Logger.info("finished step01")
@@ -17,9 +14,8 @@ defmodule ST.WorkflowSteps do
     end
   end
 
-  def step02(%{workflow_pid: pid} = params) do
+  def step02(params) do
     Logger.info("start step02 with params: #{inspect(params)}")
-    send(pid, {:update_steps, "step02"})
 
     case work() do
       true ->
@@ -32,9 +28,8 @@ defmodule ST.WorkflowSteps do
     end
   end
 
-  def step03(%{workflow_pid: pid} = params) do
+  def step03(params) do
     Logger.info("start step03 with params: #{inspect(params)}")
-    send(pid, {:update_steps, "step03"})
 
     case work() do
       true ->
@@ -47,10 +42,8 @@ defmodule ST.WorkflowSteps do
     end
   end
 
-  def step04(%{workflow_pid: pid} = params) do
+  def step04(params) do
     Logger.info("start step04 with params: #{inspect(params)}")
-
-    send(pid, {:update_steps, "step04"})
 
     case work() do
       true ->
@@ -65,8 +58,6 @@ defmodule ST.WorkflowSteps do
 
   def step05(%{workflow_pid: pid} = params) do
     Logger.info("start step05 with params: #{inspect(params)}")
-    send(pid, {:update_steps, "step05"})
-
     case work() do
       true ->
         # Logger.info("finished step05")

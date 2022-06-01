@@ -25,14 +25,15 @@ defmodule ST.WorkflowRunner do
   end
 
   def handle_events([event], _from, state) do
-    # Here each event is:
-    #  %{args: %{subscription: "region_dev"}, workflow_name: "workflow01"}
-
-    # TODO:: check with resource manager to confirm the resources are available to run a workflow
-    {:ok, pid} = ST.Workflow.start_link(event)
-    ST.Workflow.execute(pid)
-    # TODO:: process execution result here?
-
+    # each event is like: %{workflow_name: "xxx", arg01: "xxx", ...}
+    {:ok, pid} = event
+    |> Map.put_new(:id, UUID.uuid4())
+    |> ST.Workflow.start_link
+    
+    # I need to execute workflow step by step
+    # 1. get all workflow steps needed to be executed
+    # 2. call workflow's execute to execute each steps one after another.
+    
     {:noreply, [], state}
   end
 
