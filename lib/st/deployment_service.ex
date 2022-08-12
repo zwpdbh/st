@@ -18,10 +18,11 @@ defmodule ST.DeploymentService do
     url = "#{@api_endpoint}/Workflow"
     token = acquire_access_token()
 
-    headers = RestClient.init_headers()
-    |> RestClient.set_auth_bearer_token(token)
+    headers =
+      RestClient.init_headers()
+      |> RestClient.set_auth_bearer_token(token)
 
-    {:ok, workflows } = RestClient.handle_get_request(url, headers)
+    {:ok, workflows} = RestClient.handle_get_request(url, headers)
 
     workflows
     |> Enum.filter(fn x ->
@@ -95,7 +96,7 @@ defmodule ST.DeploymentService do
   def terminate_workflow(workflow_id) do
     # acquire_access_token()
     # |> Api.put_workflow_terminate(workflow_id)
-    
+
     url = "#{@api_endpoint}/Workflow/#{workflow_id}/terminate"
     token = acquire_access_token()
 
@@ -133,16 +134,24 @@ defmodule ST.DeploymentService do
       |> MapSet.difference(MapSet.new(excluded))
       |> MapSet.to_list()
       |> Enum.map(fn x ->
-        case get_workflow_detail(x) |> is_resource_group_created? do
-          {:ok, rg} ->
-            case terminate_workflow(x) do
-              true -> delete_az_rg(rg)
-              _ -> IO.puts("terminate workflow id: #{x} failed")
-            end
-
-          _ ->
-            IO.puts("no need to clean up #{x}, because it doesn't create resource group yet")
+        with {:ok, rg} <- get_workflow_detail(x) |> is_resource_group_created?,
+             {:ok, true} <- terminate_workflow(x) do
+          delete_az_rg(rg)
+          IO.puts("terminate workflow id: #{x} failed")
+        else
+          err -> IO.inspect(err)
         end
+
+        # case get_workflow_detail(x) |> is_resource_group_created? do
+        #   {:ok, rg} ->
+        #     case terminate_workflow(x) do
+        #       {:ok, true} -> delete_az_rg(rg)
+        #       _ -> IO.puts("terminate workflow id: #{x} failed")
+        #     end
+
+        #   _ ->
+        #     IO.puts("no need to clean up #{x}, because it doesn't create resource group yet")
+        # end
       end)
       |> length
 

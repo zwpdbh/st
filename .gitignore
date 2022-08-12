@@ -24,3 +24,6 @@ st-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+NativeImage/
+Default/        

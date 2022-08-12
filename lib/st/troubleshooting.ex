@@ -51,7 +51,7 @@ defmodule ST.Troubleshooting do
          %{id: id, definition_name: definition_name, step_name: step_name, messages: messages}},
         _from,
         known_issues
-  ) do
+      ) do
     # 1. From handbook find all the records associated with a step, there could be multiple such records
     # 2. Use each record's message to find out if it exists in the messages (from workflow instance)
     # 3. At last, there should be only one record (given step_name and known_message)

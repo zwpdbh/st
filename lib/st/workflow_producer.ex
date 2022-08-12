@@ -31,7 +31,7 @@ defmodule ST.WorkflowProducer do
       workflows
       |> Enum.map(fn each ->
         Map.put_new(each, :id, UUID.uuid4())
-    end)
+      end)
 
     GenStage.cast(__MODULE__, {:workflows, workflows})
   end
@@ -43,7 +43,7 @@ defmodule ST.WorkflowProducer do
   # ST.WorkflowProducer.demo
   def demo do
     workflows = [
-      %{workflow_name: "workflow01", subscription: "region_dev"},
+      %{workflow_name: "workflow01", subscription: "region_dev"}
       # %{workflow_name: "workflow02", params: %{subscription: "region_prod"}},
       # %{workflow_name: "workflow03", params: %{subscription: "region_dev"}},
       # %{workflow_name: "workflow01", params: %{subscription: "region_prod"}},
